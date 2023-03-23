@@ -36,6 +36,7 @@ export class PrinterHelpers {
     ): Partial<OrderPrinterType> => {
       return {
         id: data.id,
+        work_details:data.work_details,
         printer: {
           id: data.p_id,
           serial_number: data.p_sm,
@@ -75,6 +76,7 @@ export class PrinterHelpers {
     ): Partial<OrderUnregisteredPrinterType> => {
       return {
         id: data.id,
+        work_details:data.work_details,
         printer: {
           id: data.up_id,
           model: data.up_model,

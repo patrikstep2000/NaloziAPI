@@ -67,13 +67,13 @@ class PrinterRepo {
   public static getOrderPrintersByOrderId = async (
     id: string
   ): Promise<Partial<OrderPrinterType>[]> => {
-    return db(TABLES.ORDER_PRINTER_COUNTER + " as opc")
+    return await db(TABLES.ORDER_PRINTER_COUNTER + " as opc")
       .select(DBOrderPrinterSelect)
-      .join("printer as p", "p.id", "=", "opc.printer_id")
-      .join("printer_model as pm", "pm.id", "=", "p.model_id")
-      .join("printer_brand as pb", "pb.id", "=", "pm.printer_brand_id")
-      .join("printer_status as ps", "ps.id", "=", "p.status_id")
-      .join("printer_type as pt", "pt.id", "=", "pm.type_id")
+      .leftJoin("printer as p", "p.id", "=", "opc.printer_id")
+      .leftJoin("printer_model as pm", "pm.id", "=", "p.model_id")
+      .leftJoin("printer_brand as pb", "pb.id", "=", "pm.printer_brand_id")
+      .leftJoin("printer_status as ps", "ps.id", "=", "p.status_id")
+      .leftJoin("printer_type as pt", "pt.id", "=", "pm.type_id")
       .leftJoin("counter as c", "c.id", "=", "opc.counter_id")
       .whereNotNull("opc.printer_id")
       .andWhere("opc.order_id", id)
@@ -161,14 +161,14 @@ class PrinterRepo {
   };
 
   public static createUnregisteredPrinter = async (
-    printer: Partial<UnregisteredPrinterType>,
-    client_id?: string,
-    unregistered_client_id?: string
+    printer: Partial<UnregisteredPrinterType | undefined>,
+    client_id?: number,
+    unregistered_client_id?: number
   ): Promise<number> => {
     return (
       await db(TABLES.UNREGISTERED_PRINTER).insert({
-        model: printer.model,
-        serial_number: printer.serial_number,
+        model: printer?.model,
+        serial_number: printer?.serial_number,
         client_id: client_id,
         unregistered_client_id: unregistered_client_id
       }).returning("id")
@@ -192,17 +192,22 @@ class PrinterRepo {
       );
     });
 
-    const counter_id =
+    let counter_id
+    if(order_printer.counter?.bw_prints){
+      counter_id =
       order_printer?.counter &&
       (await CounterRepo.createCounter(
         order_printer.counter,
         String(order_printer.printer?.id)
       ));
+    }
+    
 
     return (
       await db(TABLES.ORDER_PRINTER_COUNTER)
         .insert({
           order_id: order_id,
+          work_details:order_printer.work_details,
           printer_id: order_printer.printer?.id,
           counter_id: counter_id,
         })
@@ -213,10 +218,19 @@ class PrinterRepo {
   public static createOrderUnregisteredPrinter = async (
     order_id: string,
     order_printer: Partial<OrderUnregisteredPrinterType>,
-    client_id?: string,
-    unregistered_client_id?: string
+    client_id?: number,
+    unregistered_client_id?: number
   ): Promise<number> => {
-    const printer_id = order_printer.printer && await this.createUnregisteredPrinter(order_printer.printer, client_id, unregistered_client_id)
+    let printer_id = order_printer.printer?.id
+    if(!printer_id){
+      printer_id = await this.createUnregisteredPrinter(order_printer.printer, client_id, unregistered_client_id)
+    }
+    else{
+      await MaterialRepo.deleteOrderUnregisteredPrinterMaterial(
+        order_id,
+        String(printer_id)
+      );
+    }
 
     order_printer?.material?.forEach(async (m) => {
       await MaterialRepo.createOrderPrinterMaterial(
@@ -227,17 +241,21 @@ class PrinterRepo {
       );
     });
 
-    const counter_id =
+    let counter_id
+    if(order_printer.counter?.bw_prints){
+      counter_id =
       order_printer?.counter &&
       await CounterRepo.createCounter(
         order_printer.counter,
         String(printer_id)
       );
+    }
 
     return (
       await db(TABLES.ORDER_PRINTER_COUNTER)
         .insert({
           order_id: order_id,
+          work_details: order_printer.work_details,
           unregistered_printer_id: printer_id,
           counter_id: counter_id 
         })

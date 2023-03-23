@@ -25,17 +25,19 @@ export const updatePrinterSchema = Joi.object({
 export const unregisteredPrinterSchema = Joi.object({
     model: Joi.string().required(),
     serial_number: Joi.string().required(),
-    details: Joi.string().optional()
+    details: Joi.string().optional().allow(null)
 }).unknown(true)
 
 export const orderPrinterSchema = Joi.object({
     printer: simplePrinterSchema.required(),
+    work_details:Joi.string().optional().allow(null, ""),
     counter: counterSchema.optional(),
     material: Joi.array().items(orderMaterialSchema).optional()
 }).unknown(true)
 
 export const orderUnregisteredPrinterSchema = Joi.object({
     printer: unregisteredPrinterSchema.required(),
+    work_details:Joi.string().optional().allow(null, ""),
     counter: counterSchema.optional(),
     material: Joi.array().items(orderMaterialSchema).optional()
 }).unknown(true)

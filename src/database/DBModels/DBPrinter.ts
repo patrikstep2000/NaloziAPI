@@ -1,5 +1,6 @@
 export type DBOrderPrinterType={
     id:number,
+    work_details:string,
     p_id:number,
     p_sm:string,
     p_details:string,
@@ -21,6 +22,7 @@ export type DBOrderPrinterType={
 
 export type DBOrderUnregisteredPrinterType={
     id:number,
+    work_details:string,
     up_id:number,
     up_model:string,
     up_sm:string,

@@ -28,11 +28,11 @@ class OrderRepo {
 
     await db(TABLES.ORDER).update({order_number: `${DateTime.now().year} - ${order_id}`}).where('id', order_id)
 
-    payload.printers?.forEach(async (p) => {
+    payload?.printers?.forEach(async (p) => {
       await PrinterRepo.createOrderPrinter(order_id, p)
     })
-    payload.unregistered_printers?.forEach(async(p) => {
-      await PrinterRepo.createOrderUnregisteredPrinter(order_id, p, String(payload.client.id), unregistered_client_id)
+    payload?.unregistered_printers?.forEach(async(p) => {
+      await PrinterRepo.createOrderUnregisteredPrinter(order_id, p, payload?.client?.id, unregistered_client_id)
     })
 
     return order_id;
@@ -83,7 +83,8 @@ class OrderRepo {
     return await db(TABLES.ORDER_PRINTER_COUNTER).where("order_id", id).del();
   }
 
-  public static updateOrderById = async (id:string, payload:Partial<OrderType>):Promise<number> => {
+
+  public static updateOrderById = async (id:string, payload:Partial<OrderType>):Promise<Partial<OrderType> | undefined> => {
     (payload.printers || payload.unregistered_printers) && await this.deleteOrderPrinterCounterByOrderId(id);
     payload.material && await MaterialRepo.deleteOrderMaterialByOrderId(id);
 
@@ -93,7 +94,7 @@ class OrderRepo {
 
     const client = payload.unregistered_printers && await ClientRepo.getClientIdByOrderId(id);
     payload?.unregistered_printers?.forEach(async (p) => {
-      await PrinterRepo.createOrderUnregisteredPrinter(id, p, String(client?.client_id), String(client?.unregistered_client_id));
+      await PrinterRepo.createOrderUnregisteredPrinter(id, p, client?.client_id, client?.unregistered_client_id);
     })
 
     payload?.material?.forEach(async (m) => {
@@ -106,7 +107,7 @@ class OrderRepo {
       status_id: payload?.status?.id,
       signed_name: payload?.signed_name,
       signature: payload?.signature
-    }).where("id", id).returning('id'))[0].id;
+    }).where("id", id).returning('id'))[0].id
   }
 }
 

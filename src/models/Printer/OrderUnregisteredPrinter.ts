@@ -4,6 +4,7 @@ import UnregisteredPrinterType from "../Printer/UnregisteredPrinter";
 
 type OrderUnregisteredPrinterType={
     id?:number,
+    work_details?:string,
     printer:Partial<UnregisteredPrinterType>,
     counter:Partial<CounterType>,
     material:Partial<OrderMaterialType>[]

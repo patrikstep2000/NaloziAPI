@@ -14,6 +14,7 @@ export const DBPrinterSelect={
 
 export const DBOrderPrinterSelect={
     id:"opc.id",
+    work_details:"opc.work_details",
     p_id:"p.id",
     p_sm:"p.serial_number",
     p_details:"p.details",
@@ -35,6 +36,7 @@ export const DBOrderPrinterSelect={
 
 export const DBOrderUnregisteredPrinterSelect={
     id:"opc.id",
+    work_details:"opc.work_details",
     up_id:"up.id",
     up_sm:"up.serial_number",
     up_model:"up.model",

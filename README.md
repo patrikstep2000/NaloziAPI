@@ -5,8 +5,6 @@
 
 **Prerequisites**
 
-- Don't use windows os (**Joseph Prekrath**)
-
 - Download docker
 
 - Download node
@@ -22,7 +20,7 @@
 
   
 
-git clone https://github.com/threeOagency/NaloziAPI
+git clone git@github.com:patrikstep2000/NaloziAPI.git
 
   
 

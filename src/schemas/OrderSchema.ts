@@ -15,13 +15,13 @@ const orderStatusSchema = Joi.object({
 }).unknown(true)
 
 export const updateOrderSchema = Joi.object({
-    work_details: Joi.string().optional(),
-    closed_at: Joi.date().optional(),
+    work_details: Joi.string().optional().allow(null),
+    closed_at: Joi.date().optional().allow(null),
     status: orderStatusSchema.optional(),
     printers: Joi.array().items(orderPrinterSchema).optional(),
     material: Joi.array().items(orderMaterialSchema).optional(),
     unregistered_printers: Joi.array().items(orderUnregisteredPrinterSchema).optional(),
-    signed_name: Joi.string().regex(/^[a-zA-Zčćđžš\s]{2,35}$/).optional(),
+    signed_name: Joi.string().regex(/^[a-zA-Zčćđžš\s]{2,35}$/).optional().allow(null),
     signature: Joi.string().optional().allow(null, "")
 }).unknown(true)
 

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import AuthRepo from "../repo/Auth/AuthRepo";
-import UserRepo from "../repo/UserRepo";
 
 
 class AuthController {

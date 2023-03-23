@@ -6,7 +6,7 @@ export const simpleMaterialSchema = Joi.object({
 }).unknown(true)
 
 export const orderMaterialSchema = Joi.object({
-    details: Joi.string().optional(),
+    details: Joi.string().optional().allow(null),
     amount: Joi.number().required(),
     material: simpleMaterialSchema.required()
 }).unknown(true)

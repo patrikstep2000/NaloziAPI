@@ -48,8 +48,8 @@ class ClientRepo{
     public static getClientIdByOrderId = async (id:string): Promise<{client_id: number, unregistered_client_id: number}> => {
       return db(TABLES.ORDER).select('client_id', 'unregistered_client_id').where('id', id).then((data:any) => {
         return {
-          client_id: data.client_id,
-          unregistered_client_id: data.unregistered_client_id
+          client_id: data[0].client_id,
+          unregistered_client_id: data[0].unregistered_client_id
         }
       })
     }

@@ -132,7 +132,7 @@ class MaterialRepo {
       order_id: order_id,
       printer_id: printer_id,
       unregistered_printer_id: unregistered_printer_id,
-      material_id: material.id
+      material_id: material.material?.id
     }).returning('id'))[0].id;
   }
 
