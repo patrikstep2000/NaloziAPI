@@ -34,6 +34,7 @@ export const DBOrderByIdSelect={
     uc_id:"uc.id",
     uc_name:"uc.name",
     uc_location:"uc.location",
+    uc_address:"uc.address",
     signature: "o.signature",
     signed_name: "o.signed_name"
 }

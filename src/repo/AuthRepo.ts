@@ -1,8 +1,9 @@
 import CryptoJS from "crypto-js";
 import crypto from "crypto";
-import { TABLES } from "../../constants/Enums";
-import db from "../../knexfile";
-import UserType from "../../models/User/User";
+import { TABLES } from "../constants/Enums";
+import db from "../knexfile";
+import UserType from "../models/User/User";
+import jwt from 'jsonwebtoken'
 
 class AuthRepo {
   static decrypt(ciphertext: string) {
@@ -11,12 +12,23 @@ class AuthRepo {
       process.env.ENCRYPTION_SECRET as string
     ).toString(CryptoJS.enc.Utf8);
   }
+
   public static encrypt = (value: string): string => {
     return CryptoJS.AES.encrypt(
       value,
       process.env.ENCRYPTION_SECRET as string
     ).toString();
   };
+
+  public static generateJwt(payload: any) {
+    return jwt.sign(payload, process.env.ENCRYPTION_SECRET as string, {
+      expiresIn: "7d"
+    });
+  }
+
+  public static decodeJwt(token:string){
+    return jwt.decode(token)
+  }
 
   public static generateResetCode = (id: number): string => {
     const reset_code = crypto.randomBytes(20).toString();

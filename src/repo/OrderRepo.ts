@@ -12,6 +12,7 @@ import { OrderHelpers } from "../database/DBHelperFunctions.ts/OrderHelpers";
 import { DBOrderType } from "../database/DBModels/DBOrder";
 import { DateTime } from "luxon";
 import ClientRepo from "./ClientRepo";
+import { SignOrderType } from "../models/Order/SignOrder";
 
 class OrderRepo {
 
@@ -19,7 +20,7 @@ class OrderRepo {
     const unregistered_client_id = payload.unregistered_client && (await db(TABLES.UNREGISTERED_CLIENT).insert(payload.unregistered_client).returning('id'))[0].id;
 
     const order_id = (await db(TABLES.ORDER).insert({
-      created_at: DateTime.now().toISODate(),
+      created_at: new Date(Date.now()),
       user_id: payload.user.id,
       status_id: ORDER_STATUS.OPEN,
       client_id: payload?.client?.id,
@@ -104,10 +105,16 @@ class OrderRepo {
     return (await db(TABLES.ORDER).update({
       work_details: payload?.work_details,
       closed_at: payload?.closed_at,
-      status_id: payload?.status?.id,
-      signed_name: payload?.signed_name,
-      signature: payload?.signature
+      status_id: payload?.status?.id
     }).where("id", id).returning('id'))[0].id
+  }
+
+  public static signOrderById = async (id: string, data: SignOrderType): Promise<number> => {
+    return (await db(TABLES.ORDER).update({
+      ...data,
+      status_id: ORDER_STATUS.CLOSED,
+      closed_at: new Date(Date.now())
+    }).where("id", id).returning('id'))[0].id;
   }
 }
 

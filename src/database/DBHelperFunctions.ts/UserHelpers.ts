@@ -9,10 +9,11 @@ export class UserHelpers {
         first_name: data.first_name,
         last_name: data.last_name,
         email: data.email,
+        password: data.password,
         role: {
           id: data.role_id,
           name: data.role_name,
-        },
+        }
       };
     };
   }

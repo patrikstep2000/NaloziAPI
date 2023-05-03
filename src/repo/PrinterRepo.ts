@@ -8,11 +8,16 @@ import {
   DBOrderPrinterType,
   DBClientPrinterType,
   DBOrderUnregisteredPrinterType,
+  DBTicketPrinterType,
+  DBTicketUnregisteredPrinterType,
+  DBUnregisteredPrinterType,
 } from "../database/DBModels/DBPrinter";
 import {
   DBPrinterSelect,
   DBOrderPrinterSelect,
   DBOrderUnregisteredPrinterSelect,
+  DBTicketPrinterSelect,
+  DBUnregisteredPrinterSelect,
 } from "../database/DBSelects/DBPrinterSelects";
 import db from "../knexfile";
 import OrderPrinterType from "../models/Printer/OrderPrinter";
@@ -22,8 +27,35 @@ import UnregisteredPrinterType from "../models/Printer/UnregisteredPrinter";
 import { FilterHelpers, PaginateHelpers } from "../utils/Helpers";
 import CounterRepo from "./CounterRepo";
 import MaterialRepo from "./MaterialRepo";
+import TicketPrinterType from "../models/Printer/TicketPrinter";
+import TicketUnregisteredPrinterType from "../models/Printer/TicketUnregisteredPrinter";
 
 class PrinterRepo {
+
+  //GET
+
+  public static getPrinterById = async (id: string): Promise<Partial<PrinterType>> => {
+    return await db(TABLES.PRINTER + " as p")
+      .select(DBPrinterSelect)
+      .join("printer_model as pm", "pm.id", "=", "p.model_id")
+      .join("printer_brand as pb", "pb.id", "=", "pm.printer_brand_id")
+      .join("printer_status as ps", "ps.id", "=", "p.status_id")
+      .join("printer_status as pt", "pt.id", "=", "pm.type_id")
+      .first()
+      .then((printer: DBPrinterType) => {
+        return PrinterHelpers.createPrinter(printer)
+      })
+  }
+
+  public static getUnregisteredPrinterById = async (id: string): Promise<Partial<UnregisteredPrinterType>> => {
+    return await db(TABLES.UNREGISTERED_PRINTER + " as up")
+      .select(DBUnregisteredPrinterSelect)
+      .first()
+      .then((printer: DBUnregisteredPrinterType) => {
+        return PrinterHelpers.createUnregisteredPrinter(printer)
+      })
+  }
+
   public static getPrinters = async (
     req: Request
   ): Promise<IWithPagination<Partial<PrinterType>> | undefined> => {
@@ -55,13 +87,6 @@ class PrinterRepo {
         };
         return finalData;
       });
-  };
-
-  public static deletePrinterById = async (id: string): Promise<number> => {
-    return db(TABLES.PRINTER)
-      .where("id", id)
-      .update({ deleted: true })
-      .then((noOfRows) => noOfRows);
   };
 
   public static getOrderPrintersByOrderId = async (
@@ -147,12 +172,58 @@ class PrinterRepo {
       });
   };
 
+  public static getTicketPrintersByTicketId = async (id:string): Promise<Partial<TicketPrinterType>[]> => {
+    return await db(TABLES.TICKET_PRINTER + " as tp")
+      .select(DBTicketPrinterSelect)
+      .whereNotNull("tp.printer_id")
+      .andWhere("tp.ticket_id", id)
+      .then((data: DBTicketPrinterType[]) => {
+        return Promise.all(data.map(async (printer:DBTicketPrinterType) => {
+          return {
+            id: printer.id,
+            details: printer.details,
+            printer: await this.getPrinterById(String(printer.p_id))
+          } 
+        }))
+      })
+  }
+
+  public static getTicketUnregisteredPrintersByTicketId = async (id:string): Promise<Partial<TicketUnregisteredPrinterType>[]> => {
+    return await db(TABLES.TICKET_PRINTER + " as tp")
+      .select(DBTicketPrinterSelect)
+      .whereNotNull("tp.unregistered_printer_id")
+      .andWhere("tp.ticket_id", id)
+      .then((data: DBTicketUnregisteredPrinterType[]) => {
+        return Promise.all(data.map(async (printer:DBTicketUnregisteredPrinterType) => {
+          return {
+            id: printer.id,
+            details: printer.details,
+            unregistered_printer: await this.getUnregisteredPrinterById(String(printer.up_id))
+          } 
+        }))
+      })
+  }
+
+
+
+
+
+  //UPDATE
+
   public static updatePrinterById = async (
     id: string,
     payload: Partial<PrinterType>
   ): Promise<Partial<PrinterType>> => {
     return db(TABLES.PRINTER).update(payload).where("id", id).returning("id");
   };
+
+
+
+
+
+
+
+  //CREATE
 
   public static createPrinter = async (
     payload: Partial<PrinterType>
@@ -261,6 +332,20 @@ class PrinterRepo {
         })
         .returning("id")
     )[0].id;
+  };
+
+
+
+
+
+
+  //DELETE
+
+  public static deletePrinterById = async (id: string): Promise<number> => {
+    return db(TABLES.PRINTER)
+      .where("id", id)
+      .update({ deleted: true })
+      .then((noOfRows) => noOfRows);
   };
 }
 

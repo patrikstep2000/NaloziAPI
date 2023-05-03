@@ -3,7 +3,8 @@ import OrderMaterialType from "../../models/Material/OrderMaterial";
 import OrderPrinterType from "../../models/Printer/OrderPrinter";
 import OrderUnregisteredPrinterType from "../../models/Printer/OrderUnregisteredPrinter";
 import PrinterType from "../../models/Printer/Printer";
-import { DBPrinterType, DBOrderPrinterType, DBClientPrinterType, DBOrderUnregisteredPrinterType } from "../DBModels/DBPrinter";
+import UnregisteredPrinterType from "../../models/Printer/UnregisteredPrinter";
+import { DBPrinterType, DBOrderPrinterType, DBClientPrinterType, DBOrderUnregisteredPrinterType, DBUnregisteredPrinterType } from "../DBModels/DBPrinter";
 
 export class PrinterHelpers {
     public static createPrinter = (data: DBPrinterType): Partial<PrinterType> => {
@@ -29,6 +30,15 @@ export class PrinterHelpers {
         },
       };
     };
+
+    public static createUnregisteredPrinter = (data: DBUnregisteredPrinterType): Partial<UnregisteredPrinterType> => {
+      return {
+        id: data.up_id,
+        serial_number: data.up_sm,
+        details: data.up_details,
+        model: data.up_model
+      };
+    };    
   
     public static createOrderPrinter = (
       data: DBOrderPrinterType,

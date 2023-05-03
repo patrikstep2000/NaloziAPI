@@ -1,6 +1,6 @@
 import express from 'express'
 import OrderController from '../controllers/OrderController';
-import validateId, { validateCreateOrderBody, validateUpdateOrderBody } from '../validators/BaseValidators';
+import validateId, { validateCreateOrderBody, validateSignOrderBody, validateUpdateOrderBody } from '../validators/BaseValidators';
 
 const router = express.Router();
 
@@ -11,5 +11,7 @@ router.patch("/order/:id", validateId, validateUpdateOrderBody, OrderController.
 router.get("/orders", OrderController.getOrders);
 
 router.post("/order/create", validateCreateOrderBody, OrderController.createOrder);
+
+router.post("/order/sign/:id", validateSignOrderBody, OrderController.signOrderById);
 
 export default router;

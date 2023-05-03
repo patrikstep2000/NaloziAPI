@@ -15,14 +15,13 @@ const orderStatusSchema = Joi.object({
 }).unknown(true)
 
 export const updateOrderSchema = Joi.object({
-    work_details: Joi.string().optional().allow(null),
+    work_details: Joi.string().optional().allow(null, ""),
     closed_at: Joi.date().optional().allow(null),
     status: orderStatusSchema.optional(),
     printers: Joi.array().items(orderPrinterSchema).optional(),
     material: Joi.array().items(orderMaterialSchema).optional(),
     unregistered_printers: Joi.array().items(orderUnregisteredPrinterSchema).optional(),
-    signed_name: Joi.string().regex(/^[a-zA-Zčćđžš\s]{2,35}$/).optional().allow(null),
-    signature: Joi.string().optional().allow(null, "")
+    
 }).unknown(true)
 
 export const createOrderSchema = Joi.object({
@@ -32,3 +31,8 @@ export const createOrderSchema = Joi.object({
     printers: Joi.array().items(orderPrinterSchema).optional().when('unregistered_client', {not: undefined, then: Joi.forbidden()}),
     unregistered_printers: Joi.array().items(orderUnregisteredPrinterSchema).optional()
 }).xor('client', 'unregistered_client')
+
+export const signOrderSchema = Joi.object({
+    signed_name: Joi.string().regex(/^[a-zA-Zčćđžš\s]{2,35}$/).required(),
+    signature: Joi.string().required()
+})

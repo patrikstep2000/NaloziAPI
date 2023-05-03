@@ -61,11 +61,10 @@ class UserController{
             var deletedUserParams : Partial<UserType> = {first_name: "null", last_name: "null", email: "null", password:'null',deleted_at:deletedDateTime};
             const { id } = req.params;
     
-            const deletedUser = await UserRepo.getUser(id);
-    
-            await UserRepo.insertOldUser(deletedUser)
-            const user = await UserRepo.updateUser(id, deletedUserParams);
-            res.status(200).json({ user });
+            let user = await UserRepo.getUser(id);
+            await UserRepo.insertOldUser(user)
+            user = await UserRepo.updateUser(id, deletedUserParams);
+            res.sendStatus(200)
         }
         catch{
             res.status(400).send(GenericErrors.ERROR_CONNECTING_TO_DB);

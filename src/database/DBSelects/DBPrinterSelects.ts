@@ -47,3 +47,22 @@ export const DBOrderUnregisteredPrinterSelect={
     c_col:"c.color_prints",
     c_scans:"c.scans"
 }
+
+export const DBTicketPrinterSelect={
+    id:"tp.id",
+    details:"tp.details",
+    p_id:"tp.printer_id"
+}
+
+export const DBTicketUnregisteredPrinterSelect={
+    id:"tp.id",
+    details:"tp.details",
+    up_id:"tp.unregistered_printer_id"
+}
+
+export const DBUnregisteredPrinterSelect={
+    up_id:"up.id",
+    up_sm:"up.serial_number",
+    up_model:"up.model",
+    up_details:"up.details",
+}

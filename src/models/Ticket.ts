@@ -1,5 +1,9 @@
 import ClientType from "./Client/Client";
+import ContactType from "./Client/Contact";
+import UnregisteredClientType from "./Client/UnregisteredClient";
 import PrinterType from "./Printer/Printer";
+import TicketPrinterType from "./Printer/TicketPrinter";
+import TicketUnregisteredPrinterType from "./Printer/TicketUnregisteredPrinter";
 import UserType from "./User/User";
 
 type TicketType={
@@ -7,11 +11,11 @@ type TicketType={
     details:string,
     created_at:Date,
     planned_solution_date?:Date,
-    unregistered_client?:string,
+    unregistered_client?:Partial<UnregisteredClientType>,
     client?:Partial<ClientType>,
-    unregistered_printers?:string[],
-    printers?:Partial<PrinterType>[],
-    user?:Partial<UserType>
+    unregistered_printers?:Partial<TicketUnregisteredPrinterType>[],
+    printers?:Partial<TicketPrinterType>[],
+    user?:Partial<UserType>,
 }
 
 export default TicketType;

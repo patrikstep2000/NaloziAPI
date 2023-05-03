@@ -1,0 +1,22 @@
+export const DBTicketsSelect={
+    id:"t.id",
+    details:"t.details",
+    created_at:"t.created_at",
+    planned_solution_date:"t.planned_solution_date",
+    u_fname:"u.first_name",
+    u_lname:"u.last_name",
+    u_email:"u.email",
+    c_id:"c.id",
+    c_name:"c.name",
+    c_erp:"c.erp",
+    c_oib:"c.oib",
+    c_address:"c.address",
+    c_post_code:"c.post_code",
+    c_city:"c.city",
+    c_country:"c.country",
+    c_location: "c.location",
+    uc_id:"uc.id",
+    uc_name:"uc.name",
+    uc_location:"uc.location",
+    uc_address:"uc.address"
+}

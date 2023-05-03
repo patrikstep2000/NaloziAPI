@@ -108,3 +108,13 @@ export const MaterialFilters: FiltersProps={
         ]
     }
 }
+
+export const TicketFilters: FiltersProps={
+    USER_NAME:{
+        filter:'user_name',
+        dbColumn:[
+            'u.first_name',
+            'u.last_name'
+        ]
+    },
+}

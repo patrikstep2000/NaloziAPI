@@ -48,6 +48,17 @@ class OrderController {
             res.status(400).send(GenericErrors.ERROR_CONNECTING_TO_DB);
         }
     }
+
+    public static signOrderById = async (req: Request, res: Response) => {
+        try {
+            const { id } = req.params;
+            const payload = req.body;
+            const order = await OrderRepo.signOrderById(id, payload);
+            res.status(200).json(order);
+        } catch {
+            res.status(500).send(GenericErrors.ERROR_CONNECTING_TO_DB)  
+        }
+    }
 }
 
 export default OrderController;

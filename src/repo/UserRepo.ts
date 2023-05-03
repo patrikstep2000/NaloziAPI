@@ -4,10 +4,11 @@ import { TABLES } from "../constants/Enums";
 import { UserFilters } from "../constants/Filter";
 import { UserHelpers } from "../database/DBHelperFunctions.ts/UserHelpers";
 import { DBUserType } from "../database/DBModels/DBUser";
-import { DBOldUserSelect, DBUserSelect } from "../database/DBSelects/DBUserSelects";
+import { DBUserSelect } from "../database/DBSelects/DBUserSelects";
 import db from "../knexfile";
 import UserType from "../models/User/User";
 import { FilterHelpers, PaginateHelpers } from "../utils/Helpers";
+import AuthRepo from "./AuthRepo";
 
 class UserRepo{
 
@@ -41,20 +42,31 @@ class UserRepo{
           });
     }
 
-    ///***getUser returns data for deleted_user table***///
-
     public static getUser = async(id:string) : Promise<Partial<UserType>> =>{
-      const user = await db(TABLES.USER + " as u")
-      .select(DBOldUserSelect)
+      return await db(TABLES.USER + " as u")
+      .select(DBUserSelect)
+      .join("user_role as ur", "ur.id", "=", "u.role_id")
       .where("u.id", id).first()
-      .then()
-      return user;       
+      .then((u:DBUserType) => UserHelpers.createUser(u))    
+    }
+
+    public static getUserByEmail = async (email:string): Promise<Partial<UserType>> => {
+      return await db(TABLES.USER + " as u")
+        .select(DBUserSelect)
+        .join("user_role as ur", "ur.id", "=", "u.role_id")
+        .where("u.email", email)
+        .first()
+        .then((u:DBUserType) => UserHelpers.createUser(u)) 
     }
 
     ///***insertOldUser inserts data into deleted_user table***///
-    
     public static insertOldUser = async (user:Partial<UserType>) :Promise<Partial<UserType>> =>{
-      return db('deleted_user').insert(user).returning(['id', 'first_name','last_name','email','old_id'])
+      return db('deleted_user').insert({
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.last_name,
+        old_id: user.id
+      }).returning(['id', 'first_name','last_name','email','old_id'])
     }
 
 }

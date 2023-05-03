@@ -1,5 +1,5 @@
 import sendEmail from "../Services/Mailer";
-import AuthRepo from "../repo/Auth/AuthRepo";
+import AuthRepo from "../repo/AuthRepo";
 
 
 export class MailerHelpers {

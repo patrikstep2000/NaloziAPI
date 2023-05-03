@@ -30,4 +30,4 @@ export const updateUserSchema = Joi.object({
 
 export const simpleUserSchema = Joi.object({
     id: simpleIdSchema.required()
-})
+}).unknown(true)

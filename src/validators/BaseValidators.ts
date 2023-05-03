@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createOrderSchema, updateOrderSchema } from "../schemas/OrderSchema";
+import { createOrderSchema, signOrderSchema, updateOrderSchema } from "../schemas/OrderSchema";
 import { createClientSchema, updateClientSchema } from "../schemas/ClientSchema";
 import { updatePrinterSchema, createPrinterSchema } from "../schemas/PrinterSchema";
 import { createUserSchema, updateUserSchema } from "../schemas/UserSchema";
@@ -56,6 +56,12 @@ export const validateUpdatePrinterBody = (req:Request, res:Response, next:NextFu
 
 export const validateCreatePrinterBody = (req:Request,res:Response,next:NextFunction)=>{
     const result = createPrinterSchema.validate(req.body);
+    if(result.error) throw new Error("Invalid body" + result.error.message);
+    next();
+}
+
+export const validateSignOrderBody = (req:Request,res:Response,next:NextFunction)=>{
+    const result = signOrderSchema.validate(req.body);
     if(result.error) throw new Error("Invalid body" + result.error.message);
     next();
 }

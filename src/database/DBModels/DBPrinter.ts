@@ -67,3 +67,22 @@ export type DBPrinterType={
     pt_id:number,
     pt_name:string
 }
+
+export type DBTicketPrinterType={
+    id:number,
+    details:string
+    p_id:number
+}
+
+export type DBTicketUnregisteredPrinterType={
+    id:number,
+    details:string
+    up_id:number
+}
+
+export type DBUnregisteredPrinterType={
+    up_id:number,
+    up_model:string,
+    up_sm:string,
+    up_details:string
+}
